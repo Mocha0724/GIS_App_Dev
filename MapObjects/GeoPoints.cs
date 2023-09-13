@@ -58,12 +58,35 @@ namespace MapObjects
         #endregion
 
         #region methods 
+
+        /// <summary>
+        /// Get an item with id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public GeoPoint GetItem(Int32 id)
         {
             return _Points[id];
         }
 
-        public GeoPoint AddPoint(Int32 )
+        /// <summary>
+        /// Add a point into the collection
+        /// </summary>
+        /// <param name="newPoint"></param>
+        public void AddPoint(GeoPoint newPoint)
+        {
+            _Points.Add(newPoint);
+        }
+
+        public void AddRange(GeoPoint[] newPoints)
+        {
+            _Points.AddRange(newPoints);
+        }
+        public void InsertRange(Int32 index, GeoPoint[] newPoints)
+        {
+            _Points.InsertRange(index, newPoints);
+        }
+
 
 
 
