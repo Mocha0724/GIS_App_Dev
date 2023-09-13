@@ -104,6 +104,11 @@ namespace MapObjects
             CalExtent();
         }
 
+        public void Set(Int32 index,GeoPoint newPoint)
+        {
+            _Points[index] = newPoint;
+        }
+
         /// <summary>
         /// Copy all the items to a new array
         /// </summary>
