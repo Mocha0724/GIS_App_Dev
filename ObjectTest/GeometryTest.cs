@@ -12,5 +12,6 @@ namespace ObjectTest
             geoPoint.X = 2.0;
             Assert.AreEqual(geoPoint, geoPoint_c);
         }
+
     }
 }

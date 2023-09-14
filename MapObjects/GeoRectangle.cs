@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    internal class GeoRectangle
+    public class GeoRectangle
     {
         #region field
 
@@ -23,7 +23,7 @@ namespace MapObjects
         }
         #endregion
 
-        #region feild
+        #region feilds
 
         /// <summary>
         /// 获取最小X坐标

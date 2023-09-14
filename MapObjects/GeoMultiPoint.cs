@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    public class GeoPoints
+    public class GeoMultiPoint
     {
         #region feild
         private List<GeoPoint> _Points;  //List of GeoPoints
@@ -19,12 +20,12 @@ namespace MapObjects
         #endregion
 
         #region initialize
-        public GeoPoints()
+        public GeoMultiPoint()
         {
             _Points = new List<GeoPoint>();
         }
 
-        public GeoPoints(GeoPoint[] points)
+        public GeoMultiPoint(GeoPoint[] points)
         {
             _Points = new List<GeoPoint>();
             _Points.AddRange(points);
@@ -127,10 +128,11 @@ namespace MapObjects
             CalExtent();
         }
 
-        /// <summary>
-        /// Get Rectangle
-        /// </summary>
-        /// <returns></returns>
+        public GeoRectangle GetEnvelop()
+        {
+            GeoRectangle sRectangle = new GeoRectangle(_MinX, _MaxX, _MinY, _MaxY);
+            return sRectangle;
+        }
 
         /// <summary>
         /// 更新范围
@@ -144,9 +146,9 @@ namespace MapObjects
         /// make a new GeoPoints
         /// </summary>
         /// <returns></returns>
-        public GeoPoints Clone()
+        public GeoMultiPoint Clone()
         {
-            GeoPoints sPoints = new GeoPoints();
+            GeoMultiPoint sPoints = new GeoMultiPoint();
             Int32 sPointCount = _Points.Count;
             for (Int32 i = 0; i <= sPointCount - 1; i++)
             {
