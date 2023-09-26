@@ -23,7 +23,7 @@ namespace ObjectTest
 
             MapObjects.GeoPoints ps1 = new MapObjects.GeoPoints();
             ps1.Add(p1);ps1.Add(p2);ps1.Add(p3);
-            s
+            
             MapObjects.GeoPoints ps2 = ps1.Clone();
             for(int i = 0; i< ps2.Count; i++)
             {
@@ -32,7 +32,18 @@ namespace ObjectTest
                 p.Y += 5;
             }
 
+            MapObjects.GeoPoints[] test_parray = new MapObjects.GeoPoints[2];
+            test_parray[0] = ps1;
+            test_parray[1] = ps2;
 
+            MapObjects.GeoPolygon test_polygon = new MapObjects.GeoPolygon(test_parray);
+            MapObjects.GeoPolyline test_polyine = new MapObjects.GeoPolyline(test_parray);
+            MapObjects.GeoMultiPoint test_multipoint = new MapObjects.GeoMultiPoint(test_parray);
+
+
+            Console.Write(test_polygon);
+            Console.Write(test_polyine);
+            Console.Write(test_multipoint);
 
         }
 
