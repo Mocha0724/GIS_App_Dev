@@ -18,11 +18,6 @@ namespace MapObjects
             _parts = new GeoParts();
         }
 
-        public Geometry(GeoPoints[] points)
-        {
-            _parts = new GeoParts(points);
-            CalExtent();
-        }
         #endregion
 
         #region property

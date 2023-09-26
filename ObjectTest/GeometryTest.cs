@@ -23,7 +23,7 @@ namespace ObjectTest
 
             MapObjects.GeoPoints ps1 = new MapObjects.GeoPoints();
             ps1.Add(p1);ps1.Add(p2);ps1.Add(p3);
-
+            s
             MapObjects.GeoPoints ps2 = ps1.Clone();
             for(int i = 0; i< ps2.Count; i++)
             {
@@ -32,10 +32,7 @@ namespace ObjectTest
                 p.Y += 5;
             }
 
-            List<MapObjects.GeoPoints> test_part = new List<MapObjects.GeoPoints>();
-            test_part.Add(ps1);test_part.Add(ps2);
 
-            MapObjects.GeoPolygon test_polygon = new MapObjects.GeoPolygon(test_part);
 
         }
 
