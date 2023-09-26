@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    internal class GeoPolygon
+    public class GeoPolygon:Geometry
     {
+        public GeoPolygon()
+        {
+        }
+        public GeoPolygon(GeoPoints[] points)
+        {
+            _parts = new GeoParts(points);
+            UpdateExtent();
+        }
     }
 }

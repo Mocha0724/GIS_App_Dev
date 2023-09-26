@@ -9,7 +9,7 @@ namespace MapObjects
     public class GeoParts
     {
         #region field
-        private List<GeoMultiPoint> _Parts;
+        private List<GeoPoints> _Parts;
         private double _MinX = double.MaxValue;
         private double _MaxX = double.MinValue;
         private double _MinY = double.MaxValue;
@@ -19,12 +19,12 @@ namespace MapObjects
         #region initial
         public GeoParts()
         {
-            _Parts = new List<GeoMultiPoint>();
+            _Parts = new List<GeoPoints>();
         }
 
-        public GeoParts(GeoMultiPoint[] parts)
+        public GeoParts(GeoPoints[] parts)
         {
-            _Parts = new List<GeoMultiPoint>();
+            _Parts = new List<GeoPoints>();
             _Parts.AddRange(parts);
         }
         #endregion
@@ -65,7 +65,7 @@ namespace MapObjects
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public GeoMultiPoint GetItem(Int32 index)
+        public GeoPoints GetItem(Int32 index)
         {
             return _Parts[index];
         }
@@ -75,7 +75,7 @@ namespace MapObjects
         /// </summary>
         /// <param name="index"></param>
         /// <param name="part"></param>
-        public void SetItem(Int32 index, GeoMultiPoint part)
+        public void SetItem(Int32 index, GeoPoints part)
         {
             _Parts[index] = part;
             CalExtent();
@@ -85,7 +85,7 @@ namespace MapObjects
         /// add item to the end
         /// </summary>
         /// <param name="part"></param>
-        public void Add(GeoMultiPoint part)
+        public void Add(GeoPoints part)
         {
             _Parts.Add(part);
             CalExtent();
@@ -95,7 +95,7 @@ namespace MapObjects
         /// add a list of item to the end
         /// </summary>
         /// <param name="parts"></param>
-        public void AddRange(GeoMultiPoint[] parts)
+        public void AddRange(GeoPoints[] parts)
         {
             _Parts.AddRange(parts);
             CalExtent();
@@ -116,7 +116,7 @@ namespace MapObjects
             Int32 sPartCount = _Parts.Count;
             for (Int32 i = 0; i <= sPartCount - 1; i++)
             {
-                GeoMultiPoint sPart = _Parts[i].Clone();
+                GeoPoints sPart = _Parts[i].Clone();
                 sParts.Add(sPart);
             }
             return sParts;
@@ -132,7 +132,7 @@ namespace MapObjects
             double sMaxY = double.MinValue;
             for (Int32 i=0; i<_Parts.Count;i++)
             {
-                GeoMultiPoint part = _Parts[i];
+                GeoPoints part = _Parts[i];
                 part.UpdateExtent();
                 if (_MaxX < part.MaxX)
                 {
