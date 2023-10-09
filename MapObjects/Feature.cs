@@ -15,7 +15,7 @@ namespace MapObjects
         private Geometry _Geometry;   //几何图形
         private Attributes _Attributes;   //属性集合
         private bool _Selected;     //是否被选中
-        private Type _GeoType;
+        private Type _ShapeType;
 
         #endregion
         #region 构造函数
@@ -26,7 +26,7 @@ namespace MapObjects
             _Geometry = geometry;
             _Attributes = attributes;
             _Selected = false;
-            _GeoType = geometry.GetType();
+            _ShapeType = geometry.GetType();
         }
 
         #endregion
@@ -45,9 +45,9 @@ namespace MapObjects
             set { _Attributes = value; }
         }
 
-        public Type GeoType
+        public Type ShapeType
         {
-            get { return _GeoType; }
+            get { return _ShapeType; }
         }
 
         /*
