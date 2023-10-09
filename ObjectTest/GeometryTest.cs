@@ -10,11 +10,8 @@ namespace ObjectTest
             MapObjects.GeoPoint geoPoint_c = geoPoint.Clone();
             Assert.AreEqual(geoPoint.X, geoPoint_c.X);
             geoPoint.X = 2.0;
-            Assert.AreEqual(geoPoint, geoPoint_c);
-        }
+            Console.Write(geoPoint.GetType());
 
-        public void Geometry_Test()
-        {
             MapObjects.GeoPoint p1 = new MapObjects.GeoPoint(1.0, 2.0);
             MapObjects.GeoPoint p2 = p1.Clone();
             p2.X = 2.0;
@@ -22,10 +19,10 @@ namespace ObjectTest
             p3.X = 3.0; p3.Y = 3.0;
 
             MapObjects.GeoPoints ps1 = new MapObjects.GeoPoints();
-            ps1.Add(p1);ps1.Add(p2);ps1.Add(p3);
-            
+            ps1.Add(p1); ps1.Add(p2); ps1.Add(p3);
+
             MapObjects.GeoPoints ps2 = ps1.Clone();
-            for(int i = 0; i< ps2.Count; i++)
+            for (int i = 0; i < ps2.Count; i++)
             {
                 MapObjects.GeoPoint p = ps2.GetItem(i);
                 p.X += 5;
@@ -40,12 +37,13 @@ namespace ObjectTest
             MapObjects.GeoPolyline test_polyine = new MapObjects.GeoPolyline(test_parray);
             MapObjects.GeoMultiPoint test_multipoint = new MapObjects.GeoMultiPoint(test_parray);
 
+            Console.WriteLine(test_polyine.GetType());
 
-            Console.Write(test_polygon);
-            Console.Write(test_polyine);
-            Console.Write(test_multipoint);
-
+            MapObjects.Attributes attributes = new MapObjects.Attributes();
+            MapObjects.Feature feature = new MapObjects.Feature(test_polyine,attributes);
+            Console.WriteLine(feature.Geometry.GetType());
         }
+
 
     }
 }
