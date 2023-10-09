@@ -69,14 +69,19 @@ namespace MapObjects
         }
 
 
-        public GeoPolyline Clone()
+        public Geometry Clone()
         {
             GeoPolyline sMultiPolyline = new GeoPolyline();
             sMultiPolyline._parts = _parts.Clone();
             sMultiPolyline.UpdateExtent();
             return sMultiPolyline;
         }
+
+
+
         #endregion
+
+
 
         #region private methods
         protected void UpdateExtent()
