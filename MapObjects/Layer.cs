@@ -16,11 +16,11 @@ namespace MapObjects
         private bool _Selectable = true;    //是否可选择
         private string _Description = "";   //描述
         private bool _IsDirty = false;  //是否被修改过
-        //private moFields _AttributeFields = new moFields();    //字段集合
+        private Fields _AttributeFields = new Fields();    //字段集合
         private Features _Features = new Features();    //要素集合
         private Features _SelectedFeatures = new Features();    //选择要素集合
         private GeoRectangle _Extent = new GeoRectangle(double.MaxValue, double.MinValue, double.MaxValue, double.MinValue);  //图层范围
-        //private Renderer _Renderer;   //图层渲染对象
+        private Renderer _Renderer;   //图层渲染对象
         //private LabelRenderer _LabelRenderer; //注记渲染对象
         public bool LabelVisible = false;
 
