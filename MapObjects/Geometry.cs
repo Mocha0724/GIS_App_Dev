@@ -81,8 +81,6 @@ namespace MapObjects
 
         #endregion
 
-
-
         #region private methods
         protected void UpdateExtent()
         {

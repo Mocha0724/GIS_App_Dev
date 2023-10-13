@@ -24,6 +24,8 @@ namespace MapObjects
         //private LabelRenderer _LabelRenderer; //注记渲染对象
         public bool LabelVisible = false;
 
+        private bool IsDataBase = false;
+
 
         #region 构造函数
         public Layer()
