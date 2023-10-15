@@ -20,10 +20,10 @@ namespace MapObjects
                 return;
             if (symbol == null)
                 return;
-            if (geometry.GetType() == typeof(GeoMultiPoint))
+            if (geometry.GetType() == typeof(GeoPoint))
             {
-                GeoMultiPoint sPoint = (GeoMultiPoint)geometry;
-                DrawMultiPoint(g, extent, mapScale, dpm, mpu, sPoint, symbol);
+                GeoPoint sPoint = (GeoPoint)geometry;
+                DrawPoint(g, extent, mapScale, dpm, mpu, sPoint, symbol);
             }
             else if (geometry.GetType() == typeof(GeoPolyline))
             {
@@ -75,6 +75,18 @@ namespace MapObjects
             }
         }
 
+        //绘制简单折线
+        internal static void DrawPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, moSymbol symbol)
+        {
+            if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
+            {
+                SimpleLineSymbol sSymbol = (SimpleLineSymbol)symbol;
+                if (sSymbol.Visible == true)
+                {
+                    DrawPolylineBySimpleLine(g, extent, mapScale, dpm, mpu, points, sSymbol);
+                }
+            }
+        }
 
 
 
@@ -174,6 +186,33 @@ namespace MapObjects
                 sPen.Dispose();
             }
         }
+
+        //采用简单线符号绘制简单折线
+        private static void DrawPolylineBySimpleLine(Graphics g, GeoRectangle extent, double mapScale, double dpm,
+            double mpu, GeoPoints points, SimpleLineSymbol symbol)
+        {
+            double sOffsetX = extent.MinX, sOffsetY = extent.MaxY;  //获取投影坐标系相对屏幕坐标系的平移量
+            //（1）转换为屏幕坐标
+            GraphicsPath sGraphicPath = new GraphicsPath();     //用于屏幕绘制
+            Int32 sPointCount = points.Count;  //顶点数目
+            PointF[] sScreenPoints = new PointF[sPointCount];
+            for (Int32 j = 0; j <= sPointCount - 1; j++)
+            {
+                PointF sScreenPoint = new PointF();
+                GeoPoint sCurPoint = points.GetItem(j);
+                sScreenPoint.X = (float)((sCurPoint.X - sOffsetX) * mpu / mapScale * dpm);
+                sScreenPoint.Y = (float)((sOffsetY - sCurPoint.Y) * mpu / mapScale * dpm);
+                sScreenPoints[j] = sScreenPoint;
+            }
+            sGraphicPath.AddLines(sScreenPoints);
+            //（2）绘制
+            Pen sPen = new Pen(symbol.Color, (float)(symbol.Size / 1000 * dpm));
+            sPen.DashStyle = (DashStyle)symbol.Style;
+            g.DrawPath(sPen, sGraphicPath);
+            sPen.Dispose();
+        }
+
+
         private static Rectangle GetHalfRectangle(Rectangle rectangle)
         {
             Point center = new Point(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2);

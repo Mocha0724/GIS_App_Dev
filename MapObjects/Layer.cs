@@ -53,6 +53,24 @@ namespace MapObjects
         #endregion
 
         #region private methods
+        //绘制所有要素
+        internal void DrawFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu)
+        {
+            //为所有要素配置符号
+            //SetFeatureSymbols();
+            //判断是否位于绘制范围内，如是，则绘制
+            Int32 sFeatureCount = _Features.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                Feature sFeature = _Features.GetItem(i);
+                if (IsFeatureInExtent(sFeature, extent) == true)
+                {
+                    Geometry sGeometry = _Features.GetItem(i).Geometry;
+                    Symbol sSymbol = _Features.GetItem(i).Symbol;
+                    MapDrawingTools.DrawGeometry(g, extent, mapScale, dpm, mpu, sGeometry, sSymbol);
+                }
+            }
+        }
         private void Initialize()
         {
             //加入_AttributesFields对象的事件
@@ -84,6 +102,18 @@ namespace MapObjects
             }
             _Extent = new GeoRectangle(sMinX, sMaxX, sMinY, sMaxY);
         }
+
+        private bool IsFeatureInExtent(Feature feature, GeoRectangle extent)
+        {
+            GeoRectangle sRect = feature.GetEnvelope();
+            if (sRect.MaxX < extent.MinX || sRect.MinX > extent.MaxX)
+            { return false; }
+            else if (sRect.MaxY < extent.MinY || sRect.MinY > extent.MaxY)
+            { return false; }
+            else
+            { return true; }
+        }
+
         #endregion
 
 
