@@ -12,7 +12,7 @@ namespace MapObjects
 {
     internal static class MapDrawingTool
     {
-        internal static void DrawGeometry(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Geometry geometry, moSymbol symbol)
+        internal static void DrawGeometry(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Geometry geometry, Symbol symbol)
         {
             if (extent == null)
                 return;
@@ -76,7 +76,7 @@ namespace MapObjects
         }
 
         //绘制简单折线
-        internal static void DrawPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, moSymbol symbol)
+        internal static void DrawPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
             {
@@ -88,11 +88,48 @@ namespace MapObjects
             }
         }
 
+        //绘制简单多边形
+        internal static void DrawPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
+        {
+            if (symbol.SymbolType == SymbolTypeConstant.SimpleFillSymbol)
+            {
+                SimpleFillSymbol sSymbol = (SimpleFillSymbol)symbol;
+                if (sSymbol.Visible == true)
+                {
+                    DrawPolygonBySimpleFill(g, extent, mapScale, dpm, mpu, points, sSymbol);
+                }
+            }
+        }
+
+        //绘制复合折线
+        internal static void DrawMultiPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolyline multiPolyline, Symbol symbol)
+        {
+            if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
+            {
+                SimpleLineSymbol sSymbol = (SimpleLineSymbol)symbol;
+                if (sSymbol.Visible == true)
+                    DrawMultiPolylineBySimpleLine(g, extent, mapScale, dpm, mpu, multiPolyline, sSymbol);
+            }
+        }
+
+        //绘制复合多边形
+        internal static void DrawMultiPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolygon multiPolygon, Symbol symbol)
+        {
+            if (symbol.SymbolType == SymbolTypeConstant.SimpleFillSymbol)
+            {
+                SimpleFillSymbol sSymbol = (SimpleFillSymbol)symbol;
+                if (sSymbol.Visible == true)
+                    DrawMultiPolygonBySimpleFill(g, extent, mapScale, dpm, mpu, multiPolygon, sSymbol);
+            }
+        }
 
 
 
 
 
+
+
+        #region private methods
         //采用简单点符号绘制点
         private static void DrawPointBySimpleMarker(Graphics g, GeoRectangle extent, double mapScale, double dpm,
             double mpu, GeoPoint point, SimpleMarkerSymbol symbol)
@@ -212,6 +249,111 @@ namespace MapObjects
             sPen.Dispose();
         }
 
+        //采用简单填充符号绘制简单多边形
+        private static void DrawPolygonBySimpleFill(Graphics g, GeoRectangle extent, double mapScale, double dpm,
+            double mpu, GeoPoints points, SimpleFillSymbol symbol)
+        {
+            double sOffsetX = extent.MinX, sOffsetY = extent.MaxY;  //获取投影坐标系相对屏幕坐标系的平移量
+            //（1）转换为屏幕坐标
+            GraphicsPath sGraphicPath = new GraphicsPath();     //用于屏幕绘制
+            Int32 sPointCount = points.Count;  //顶点数目
+            PointF[] sScreenPoints = new PointF[sPointCount];
+            for (Int32 j = 0; j <= sPointCount - 1; j++)
+            {
+                PointF sScreenPoint = new PointF();
+                GeoPoint sCurPoint = points.GetItem(j);
+                sScreenPoint.X = (float)((sCurPoint.X - sOffsetX) * mpu / mapScale * dpm);
+                sScreenPoint.Y = (float)((sOffsetY - sCurPoint.Y) * mpu / mapScale * dpm);
+                sScreenPoints[j] = sScreenPoint;
+            }
+            sGraphicPath.AddPolygon(sScreenPoints);
+            //（2）填充
+            SolidBrush sBrush = new SolidBrush(symbol.Color);
+            g.FillPath(sBrush, sGraphicPath);
+            sBrush.Dispose();
+            //（3）绘制边界
+            if (symbol.Outline.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
+            {
+                SimpleLineSymbol sOutline = symbol.Outline;
+                if (sOutline.Visible == true)
+                {
+                    Pen sPen = new Pen(sOutline.Color, (float)(sOutline.Size / 1000 * dpm));
+                    sPen.DashStyle = (DashStyle)sOutline.Style;
+                    g.DrawPath(sPen, sGraphicPath);
+                    sPen.Dispose();
+                }
+            }
+        }
+
+        //采用简单线符号绘制复合折线
+        private static void DrawMultiPolylineBySimpleLine(Graphics g, GeoRectangle extent, double mapScale, double dpm,
+            double mpu, GeoPolyline multiPolyline, SimpleLineSymbol symbol)
+        {
+            double sOffsetX = extent.MinX, sOffsetY = extent.MaxY;  //获取投影坐标系相对屏幕坐标系的平移量
+            //（1）转换为屏幕坐标
+            Int32 sPartCount = multiPolyline.Parts.Count;        //简单折线的数目
+            GraphicsPath sGraphicPath = new GraphicsPath();     //定义复合多边形，用于屏幕绘制
+            for (Int32 i = 0; i <= sPartCount - 1; i++)
+            {
+                Int32 sPointCount = multiPolyline.Parts.GetItem(i).Count;  //当前简单折线的顶点数目
+                PointF[] sScreenPoints = new PointF[sPointCount];
+                for (Int32 j = 0; j <= sPointCount - 1; j++)
+                {
+                    PointF sScreenPoint = new PointF();
+                    GeoPoint sCurPoint = multiPolyline.Parts.GetItem(i).GetItem(j);
+                    sScreenPoint.X = (float)((sCurPoint.X - sOffsetX) * mpu / mapScale * dpm);
+                    sScreenPoint.Y = (float)((sOffsetY - sCurPoint.Y) * mpu / mapScale * dpm);
+                    sScreenPoints[j] = sScreenPoint;
+                }
+                sGraphicPath.AddLines(sScreenPoints);
+                sGraphicPath.StartFigure();
+            }
+            //（2）绘制
+            Pen sPen = new Pen(symbol.Color, (float)(symbol.Size / 1000 * dpm));
+            sPen.DashStyle = (DashStyle)symbol.Style;
+            g.DrawPath(sPen, sGraphicPath);
+            sPen.Dispose();
+        }
+
+        //采用简单填充符号绘制复合多边形
+        private static void DrawMultiPolygonBySimpleFill(Graphics g, GeoRectangle extent, double mapScale, double dpm,
+            double mpu, GeoPolygon multiPolygon, SimpleFillSymbol symbol)
+        {
+            double sOffsetX = extent.MinX, sOffsetY = extent.MaxY;  //获取投影坐标系相对屏幕坐标系的平移量
+            //（1）转换为屏幕坐标
+            Int32 sPartCount = multiPolygon.Parts.Count;        //简单多边形的数目
+            GraphicsPath sGraphicPath = new GraphicsPath();     //定义复合多边形，用于屏幕绘制
+            for (Int32 i = 0; i <= sPartCount - 1; i++)
+            {
+                Int32 sPointCount = multiPolygon.Parts.GetItem(i).Count;  //当前简单多边形的顶点数目
+                PointF[] sScreenPoints = new PointF[sPointCount];
+                for (Int32 j = 0; j <= sPointCount - 1; j++)
+                {
+                    PointF sScreenPoint = new PointF();
+                    GeoPoint sCurPoint = multiPolygon.Parts.GetItem(i).GetItem(j);
+                    sScreenPoint.X = (float)((sCurPoint.X - sOffsetX) * mpu / mapScale * dpm);
+                    sScreenPoint.Y = (float)((sOffsetY - sCurPoint.Y) * mpu / mapScale * dpm);
+                    sScreenPoints[j] = sScreenPoint;
+                }
+                sGraphicPath.AddPolygon(sScreenPoints);
+            }
+            //（2）填充
+            SolidBrush sBrush = new SolidBrush(symbol.Color);
+            g.FillPath(sBrush, sGraphicPath);
+            sBrush.Dispose();
+            //（3）绘制边界
+            if (symbol.Outline.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
+            {
+                SimpleLineSymbol sOutline = symbol.Outline;
+                if (sOutline.Visible == true)
+                {
+                    Pen sPen = new Pen(sOutline.Color, (float)(sOutline.Size / 1000 * dpm));
+                    sPen.DashStyle = (DashStyle)sOutline.Style;
+                    g.DrawPath(sPen, sGraphicPath);
+                    sPen.Dispose();
+                }
+            }
+        }
 
         private static Rectangle GetHalfRectangle(Rectangle rectangle)
         {
@@ -243,5 +385,7 @@ namespace MapObjects
             sPointArray[2] = p3;
             g.FillPolygon(brush, sPointArray);
         }
+
+        #endregion
     }
 }

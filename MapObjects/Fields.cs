@@ -100,13 +100,13 @@ namespace MapObjects
 
         #region 事件
 
-        internal delegate void FieldRemovedHandle(object sender, Int32 fieldIndex, moField fieldRemoved);
+        internal delegate void FieldRemovedHandle(object sender, Int32 fieldIndex, Field fieldRemoved);
         /// <summary>
         /// 有字段被删除
         /// </summary>
         internal event FieldRemovedHandle FieldRemoved;
 
-        internal delegate void FieldAppendedHandle(object sender, moField fieldAppended);
+        internal delegate void FieldAppendedHandle(object sender, Field fieldAppended);
         /// <summary>
         /// 有字段被加入
         /// </summary>

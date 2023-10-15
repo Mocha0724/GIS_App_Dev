@@ -16,6 +16,7 @@ namespace MapObjects
         private Attributes _Attributes;   //属性集合
         private bool _Selected;     //是否被选中
         private Type _ShapeType;
+        private Symbol _Symbol;
 
         #endregion
         #region 构造函数
@@ -50,12 +51,12 @@ namespace MapObjects
             get { return _ShapeType; }
         }
 
-        /*
+        
         public Symbol Symbol
         {
             get { return _Symbol; }
             set { _Symbol = value; }
-        }*/
+        }
 
         public bool Selected
         {

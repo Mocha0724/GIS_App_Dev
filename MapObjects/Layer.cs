@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,17 +44,20 @@ namespace MapObjects
 
 
         #region public methods
-        
-        //绘制所有要素
-        internal void DrawFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu)
-        {
 
+        public void UpdateExtent()
+        {
+            CalExtent();
         }
 
-        #endregion
+        /// <summary>
+        /// 清除选择
+        /// </summary>
+        public void ClearSelection()
+        {
+            _SelectedFeatures.Clear();
+        }
 
-        #region private methods
-        //绘制所有要素
         internal void DrawFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu)
         {
             //为所有要素配置符号
@@ -67,17 +71,118 @@ namespace MapObjects
                 {
                     Geometry sGeometry = _Features.GetItem(i).Geometry;
                     Symbol sSymbol = _Features.GetItem(i).Symbol;
-                    MapDrawingTools.DrawGeometry(g, extent, mapScale, dpm, mpu, sGeometry, sSymbol);
+                    MapDrawingTool.DrawGeometry(g, extent, mapScale, dpm, mpu, sGeometry, sSymbol);
                 }
             }
         }
+
+        //绘制指定范围内的所有选择要素
+        internal void DrawSelectedFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Symbol symbol)
+        {
+            //判断是否位于绘制范围内，如是，则绘制
+            Int32 sFeatureCount = _SelectedFeatures.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                Feature sFeature = _SelectedFeatures.GetItem(i);
+                if (IsFeatureInExtent(sFeature, extent) == true)
+                {
+                    Geometry sGeometry = _SelectedFeatures.GetItem(i).Geometry;
+                    MapDrawingTool.DrawGeometry(g, extent, mapScale, dpm, mpu, sGeometry, symbol);
+                }
+            }
+        }
+        #endregion
+
+        #region private methods
+        //绘制所有要素
+
+
+
         private void Initialize()
         {
             //加入_AttributesFields对象的事件
-            //_AttributeFields.FieldAppended += _AttributesFields_FieldAppended;
-            //_AttributeFields.FieldRemoved += _AttributesFields_FieldRemoved;
+            _AttributeFields.FieldAppended += _AttributesFields_FieldAppended;
+            _AttributeFields.FieldRemoved += _AttributesFields_FieldRemoved;
             //初始化图层渲染
-            //InitializeRenderer();
+            InitializeRenderer();
+        }
+
+        private void InitializeRenderer()
+        {
+            SimpleRenderer sRenderer = new SimpleRenderer();
+            if (_ShapeType == typeof(GeoPoint))
+            {
+                sRenderer.Symbol = new SimpleMarkerSymbol();
+                _Renderer = sRenderer;
+            }
+            else if (_ShapeType == typeof(GeoPolyline))
+            {
+                sRenderer.Symbol = new SimpleLineSymbol();
+                _Renderer = sRenderer;
+            }
+            else
+            {
+                sRenderer.Symbol = new SimpleFillSymbol();
+                _Renderer = sRenderer;
+            }
+        }
+
+
+        //有字段被加入
+        private void _AttributesFields_FieldAppended(object sender, Field fieldAppended)
+        {
+            //给所有要素增加一个属性值
+            Int32 sFeatureCount = _Features.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                Feature sFeature = _Features.GetItem(i);
+                if (fieldAppended.ValueType == typeof(Int16))
+                {
+                    Int16 sValue = 0;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else if (fieldAppended.ValueType == typeof(Int32))
+                {
+                    Int32 sValue = 0;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else if (fieldAppended.ValueType == typeof(Int64))
+                {
+                    Int64 sValue = 0;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else if (fieldAppended.ValueType == typeof(float))
+                {
+                    float sValue = 0;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else if (fieldAppended.ValueType == typeof(double))
+                {
+                    double sValue = 0;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else if (fieldAppended.ValueType == typeof(string))
+                {
+                    string sValue = string.Empty;
+                    sFeature.Attributes.Append(sValue);
+                }
+                else
+                {
+                    throw new Exception("Invalid field value type!");
+                }
+            }
+        }
+
+        //有字段被删除
+        private void _AttributesFields_FieldRemoved(object sender, int fieldIndex, Field fieldRemoved)
+        {
+            //删除所有要素对应字段的属性值
+            Int32 sFeatureCount = _Features.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                Feature sFeature = _Features.GetItem(i);
+                sFeature.Attributes.RemoveAt(fieldIndex);
+            }
         }
 
         //计算图层范围
