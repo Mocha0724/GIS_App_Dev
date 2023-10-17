@@ -58,7 +58,7 @@ namespace MapObjects
         /// make a copy of this GeoPoint
         /// </summary>
         /// <returns>GeoPoint</returns>
-        public GeoPoint Clone()
+        new public GeoPoint Clone()
         {
             GeoPoint sPoint = new GeoPoint(_X, _Y);
             return sPoint;

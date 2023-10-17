@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    internal class MapDrawingReference
+    public class MapDrawingReference
     {
         #region 字段
         private double _OffsetX, _OffsetY;              //绘图区域左上点（0，0）对应的投影坐标系中的点，即投影坐标系相对屏幕坐标系的平移量
@@ -30,7 +30,7 @@ namespace MapObjects
         /// <param name="mapScale">地图比例尺的倒数</param>
         /// <param name="dpm">每米代表的象素数</param>
         /// <param name="mpu">1个地图坐标单位代表的米数</param>
-        internal MapDrawingReference(double offsetX, double offsetY, double mapScale, double dpm, double mpu)
+        public MapDrawingReference(double offsetX, double offsetY, double mapScale, double dpm, double mpu)
         {
             _OffsetX = offsetX;
             _OffsetY = offsetY;
@@ -43,31 +43,31 @@ namespace MapObjects
 
         #region 属性
 
-        internal double OffsetX
+        public double OffsetX
         {
             get { return _OffsetX; }
             set { _OffsetX = value; }
         }
 
-        internal double OffsetY
+        public double OffsetY
         {
             get { return _OffsetY; }
             set { _OffsetY = value; }
         }
 
-        internal double MapScale
+        public double MapScale
         {
             get { return _MapScale; }
             set { _MapScale = value; }
         }
 
-        internal double dpm
+        public double dpm
         {
             get { return _dpm; }
             set { _dpm = value; }
         }
 
-        internal double mpu
+        public double mpu
         {
             get { return _mpu; }
             set { _mpu = value; }
@@ -78,7 +78,7 @@ namespace MapObjects
         #region 方法
 
         //设置视图
-        internal void SetView(double offsetX, double offsetY, double mapScale)
+        public void SetView(double offsetX, double offsetY, double mapScale)
         {
             _OffsetX = offsetX;
             _OffsetY = offsetY;
@@ -86,7 +86,7 @@ namespace MapObjects
         }
 
         //以指定中心和指定系数进行缩放
-        internal void ZoomByCenter(GeoPoint center, double ratio)
+        public void ZoomByCenter(GeoPoint center, double ratio)
         {
             double sMapScale = _MapScale / ratio;      //新的比例尺
 
@@ -103,7 +103,7 @@ namespace MapObjects
         }
 
         //将指定范围缩放至指定大小的屏幕窗口
-        internal void ZoomExtentToWindow(GeoRectangle rect, double windowWidth, double windowHeight)
+        public void ZoomExtentToWindow(GeoRectangle rect, double windowWidth, double windowHeight)
         {
             double sRectWidth = rect.Width, sRectHeight = rect.Height;
             //计算宽高比例
@@ -136,14 +136,14 @@ namespace MapObjects
         }
 
         //将地图平移指定量
-        internal void PanDelta(double deltaX, double deltaY)
+        public void PanDelta(double deltaX, double deltaY)
         {
             _OffsetX = _OffsetX - deltaX;
             _OffsetY = _OffsetY - deltaY;
         }
 
         //将屏幕坐标转换为地图坐标
-        internal GeoPoint ToMapPoint(double x, double y)
+        public GeoPoint ToMapPoint(double x, double y)
         {
             double sX = x / _dpm / _mpu * _MapScale + _OffsetX;
             double sY = _OffsetY - y / _dpm / _mpu * _MapScale;
@@ -152,7 +152,7 @@ namespace MapObjects
         }
 
         //将地图坐标转换为屏幕坐标
-        internal GeoPoint FromMapPoint(double x, double y)
+        public GeoPoint FromMapPoint(double x, double y)
         {
             double sX = (x - _OffsetX) / _MapScale * _dpm * _mpu;
             double sY = (_OffsetY - y) / _MapScale * _dpm * _mpu;
@@ -161,14 +161,14 @@ namespace MapObjects
         }
 
         //将屏幕距离转换为地图距离
-        internal double ToMapDistance(double dis)
+        public double ToMapDistance(double dis)
         {
             double sDis = dis * _MapScale / _mpu / _dpm;
             return sDis;
         }
 
         //将地图距离转换为屏幕距离
-        internal double FromMapDistance(double dis)
+        public double FromMapDistance(double dis)
         {
             double sDis = dis / _MapScale * _dpm * _mpu;
             return sDis;

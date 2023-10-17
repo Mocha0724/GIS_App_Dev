@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    public class GeoRectangle
+    public class GeoRectangle:Shape
     {
         #region field
 

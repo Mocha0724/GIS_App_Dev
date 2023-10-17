@@ -32,10 +32,13 @@
             // 
             // MapControl
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(13F, 28F);
             AutoScaleMode = AutoScaleMode.Font;
+            Margin = new Padding(6, 5, 6, 5);
             Name = "MapControl";
-            Size = new Size(372, 283);
+            Size = new Size(691, 466);
+            Paint += MapControl_Paint;
+            Resize += MapControl_Resize;
             ResumeLayout(false);
         }
 

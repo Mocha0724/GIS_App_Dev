@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    internal static class MapDrawingTool
+    public static class MapDrawingTool
     {
-        internal static void DrawGeometry(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Geometry geometry, Symbol symbol)
+        public static void DrawGeometry(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Geometry geometry, Symbol symbol)
         {
             if (extent == null)
                 return;
@@ -38,7 +38,7 @@ namespace MapObjects
         }
 
         //绘制点
-        internal static void DrawPoint(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoint point, Symbol symbol)
+        public static void DrawPoint(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoint point, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleMarkerSymbol)
             {
@@ -48,7 +48,7 @@ namespace MapObjects
             }
         }
 
-        internal static void DrawLine(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoint point1,GeoPoint point2, Symbol symbol)
+        public static void DrawLine(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoint point1,GeoPoint point2, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
             {
@@ -58,7 +58,7 @@ namespace MapObjects
             }
         }
         //绘制点集合（多点）
-        internal static void DrawPoints(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
+        public static void DrawPoints(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleMarkerSymbol)
             {
@@ -76,7 +76,7 @@ namespace MapObjects
         }
 
         //绘制简单折线
-        internal static void DrawPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
+        public static void DrawPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
             {
@@ -89,7 +89,7 @@ namespace MapObjects
         }
 
         //绘制简单多边形
-        internal static void DrawPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
+        public static void DrawPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPoints points, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleFillSymbol)
             {
@@ -102,7 +102,7 @@ namespace MapObjects
         }
 
         //绘制复合折线
-        internal static void DrawMultiPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolyline multiPolyline, Symbol symbol)
+        public static void DrawMultiPolyline(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolyline multiPolyline, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
             {
@@ -113,7 +113,7 @@ namespace MapObjects
         }
 
         //绘制复合多边形
-        internal static void DrawMultiPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolygon multiPolygon, Symbol symbol)
+        public static void DrawMultiPolygon(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoPolygon multiPolygon, Symbol symbol)
         {
             if (symbol.SymbolType == SymbolTypeConstant.SimpleFillSymbol)
             {
@@ -125,7 +125,18 @@ namespace MapObjects
 
 
 
-
+        //绘制矩形
+        public static void DrawRectangle(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, GeoRectangle rectangle, Symbol symbol)
+        {
+            if (symbol.SymbolType == SymbolTypeConstant.SimpleFillSymbol)
+            {
+                SimpleFillSymbol sSymbol = (SimpleFillSymbol)symbol;
+                if (sSymbol.Visible == true)
+                {
+                    DrawRectangleBySimpleFill(g, extent, mapScale, dpm, mpu, rectangle, sSymbol);
+                }
+            }
+        }
 
 
 
@@ -355,6 +366,40 @@ namespace MapObjects
             }
         }
 
+        //采用简单填充符号绘制矩形
+        private static void DrawRectangleBySimpleFill(Graphics g, GeoRectangle extent, double mapScale, double dpm,
+            double mpu, GeoRectangle rectangle, SimpleFillSymbol symbol)
+        {
+            double sOffsetX = extent.MinX, sOffsetY = extent.MaxY;  //获取投影坐标系相对屏幕坐标系的平移量
+            //（1）转换为屏幕坐标并生成矩形
+            Point sTopLeftPoint = new Point(), sBottomRightPoint = new Point();
+            sTopLeftPoint.X = (Int32)((rectangle.MinX - sOffsetX) * mpu / mapScale * dpm);
+            sTopLeftPoint.Y = (Int32)((sOffsetY - rectangle.MaxY) * mpu / mapScale * dpm);
+            sBottomRightPoint.X = (Int32)((rectangle.MaxX - sOffsetX) * mpu / mapScale * dpm);
+            sBottomRightPoint.Y = (Int32)((sOffsetY - rectangle.MinY) * mpu / mapScale * dpm);
+            Int32 sWidth = sBottomRightPoint.X - sTopLeftPoint.X;
+            Int32 sHeight = sBottomRightPoint.Y - sTopLeftPoint.Y;
+            Rectangle sRect = new Rectangle(sTopLeftPoint.X, sTopLeftPoint.Y, sWidth, sHeight);
+            //（2）填充
+            if (symbol.Color != Color.Transparent)
+            {
+                SolidBrush sBrush = new SolidBrush(symbol.Color);
+                g.FillRectangle(sBrush, sRect);
+                sBrush.Dispose();
+            }
+            //（3）绘制边界
+            if (symbol.Outline.SymbolType == SymbolTypeConstant.SimpleLineSymbol)
+            {
+                SimpleLineSymbol sOutline = symbol.Outline;
+                if (sOutline.Visible == true)
+                {
+                    Pen sPen = new Pen(sOutline.Color, (float)(sOutline.Size / 1000 * dpm));
+                    sPen.DashStyle = (DashStyle)sOutline.Style;
+                    g.DrawRectangle(sPen, sRect);
+                    sPen.Dispose();
+                }
+            }
+        }
         private static Rectangle GetHalfRectangle(Rectangle rectangle)
         {
             Point center = new Point(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2);

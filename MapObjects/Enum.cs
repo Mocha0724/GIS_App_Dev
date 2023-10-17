@@ -5,6 +5,18 @@ using System.Text;
 
 namespace MyMapObjects
 {
+    /// <summary>
+    /// 值类型常数
+    /// </summary>
+    public enum ValueTypeConstant
+    {
+        dInt16 = 0,
+        dInt32 = 1,
+        dInt64 = 2,
+        dSingle = 3,
+        dDouble = 4,
+        dText = 5
+    }
 
     public enum SymbolTypeConstant
     {
@@ -37,6 +49,15 @@ namespace MyMapObjects
         DashDotDot = 4
     }
 
+    /// <summary>
+    /// 几何类型常数
+    /// </summary>
+    public enum GeometryTypeConstant
+    {
+        Point = 0,
+        Polyline = 1,
+        Polygon = 2
+    }
 
     /// <summary>
     /// 图层渲染类型常数

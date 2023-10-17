@@ -26,7 +26,118 @@ namespace MapObjects
         public bool LabelVisible = false;
 
         private bool IsDataBase = false;
+        #region 属性
 
+        /// <summary>
+        /// 获取图层的要素几何类型
+        /// </summary>
+        public Type ShapeType
+        {
+            get { return _ShapeType; }
+        }
+
+        /// <summary>
+        /// 获取或设置图层名称
+        /// </summary>
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; }
+        }
+
+        /// <summary>
+        /// 指示图层是否可见
+        /// </summary>
+        public bool Visible
+        {
+            get { return _Visible; }
+            set { _Visible = value; }
+        }
+
+        /// <summary>
+        /// 指示图层是否可以进行选择操作
+        /// </summary>
+        public bool Selectable
+        {
+            get { return _Selectable; }
+            set { _Selectable = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置描述
+        /// </summary>
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value; }
+        }
+
+        /// <summary>
+        /// 指示图层是否被修改过
+        /// </summary>
+        public bool IsDirty
+        {
+            get { return _IsDirty; }
+            set { _IsDirty = value; }
+        }
+
+        /// <summary>
+        /// 获取图层范围
+        /// </summary>
+        public GeoRectangle Extent
+        {
+            get { return _Extent; }
+        }
+
+        /// <summary>
+        /// 获取或设置要素集合
+        /// </summary>
+        public Features Features
+        {
+            get { return _Features; }
+            set
+            {
+                _Features = value;
+                CalExtent();
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置选择要素集合
+        /// </summary>
+        public Features SelectedFeatures
+        {
+            get { return _SelectedFeatures; }
+            set { _SelectedFeatures = value; }
+        }
+
+        /// <summary>
+        /// 获取属性字段集合
+        /// </summary>
+        public Fields AttributeFields
+        {
+            get { return _AttributeFields; }
+        }
+
+        /// <summary>
+        /// 获取或设置图层渲染
+        /// </summary>
+        public Renderer Renderer
+        {
+            get { return _Renderer; }
+            set { _Renderer = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置图层注记渲染
+        /// </summary>
+        /*public moLabelRenderer LabelRenderer
+        {
+            get { return _LabelRenderer; }
+            set { _LabelRenderer = value; }
+        }*/
+
+        #endregion
 
         #region 构造函数
         public Layer()
@@ -58,7 +169,7 @@ namespace MapObjects
             _SelectedFeatures.Clear();
         }
 
-        internal void DrawFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu)
+        public void DrawFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu)
         {
             //为所有要素配置符号
             //SetFeatureSymbols();
@@ -77,7 +188,7 @@ namespace MapObjects
         }
 
         //绘制指定范围内的所有选择要素
-        internal void DrawSelectedFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Symbol symbol)
+        public void DrawSelectedFeatures(Graphics g, GeoRectangle extent, double mapScale, double dpm, double mpu, Symbol symbol)
         {
             //判断是否位于绘制范围内，如是，则绘制
             Int32 sFeatureCount = _SelectedFeatures.Count;
@@ -89,6 +200,49 @@ namespace MapObjects
                     Geometry sGeometry = _SelectedFeatures.GetItem(i).Geometry;
                     MapDrawingTool.DrawGeometry(g, extent, mapScale, dpm, mpu, sGeometry, symbol);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 根据矩形盒执行搜索
+        /// </summary>
+        /// <param name="selectingBox"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
+        public Features SearchByBox(GeoRectangle selectingBox, double tolerance)
+        {
+            //说明：出于简化，仅考虑一种选择模式
+            Features sSelection = null;
+            if (selectingBox.Width == 0 && selectingBox.Height == 0)
+            {
+                //按点选
+                GeoPoint sSelectingPoint = new GeoPoint(selectingBox.MinX, selectingBox.MinY);
+                sSelection = SearchFeaturesByPoint(sSelectingPoint, tolerance);
+            }
+            else
+            {
+                //按框选
+                sSelection = SearchFeaturesByBox(selectingBox);
+            }
+            return sSelection;
+        }
+
+        //根据指定方法执行选择（如新建、求并、求交、求差）
+        public void ExecuteSelect(Features features, Int32 selectMethod)
+        {
+            //说明：此处仅新建集合
+            if (selectMethod == 0)
+            {
+                _SelectedFeatures.Clear();
+                Int32 sFeatureCount = features.Count;
+                for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+                {
+                    _SelectedFeatures.Add(features.GetItem(i));
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
         #endregion
@@ -217,6 +371,77 @@ namespace MapObjects
             { return false; }
             else
             { return true; }
+        }
+
+
+        //根据点搜索要素
+        private Features SearchFeaturesByPoint(GeoPoint point, double tolerance)
+        {
+            Features sSelectedFeatures = new Features();
+            Int32 sFeatureCount = _Features.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                if (_ShapeType == typeof(GeoPoint))
+                {
+                    GeoPoint sPoint = (GeoPoint)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsPointOnPoint(point, sPoint, tolerance) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+                else if (_ShapeType == typeof(GeoPolyline))
+                {
+                    GeoPolyline sMultiPolyline = (GeoPolyline)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsPointOnMultiPolyline(point, sMultiPolyline, tolerance) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+                else if (_ShapeType == typeof(GeoPolygon))
+                {
+                    GeoPolygon sMultiPolygon = (GeoPolygon)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsPointWithinMultiPolygon(point, sMultiPolygon) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+            }
+            return sSelectedFeatures;
+        }
+
+        //根据矩形盒搜索要素
+        private Features SearchFeaturesByBox(GeoRectangle selectingBox)
+        {
+            Features sSelectedFeatures = new Features();
+            Int32 sFeatureCount = _Features.Count;
+            for (Int32 i = 0; i <= sFeatureCount - 1; i++)
+            {
+                if (_ShapeType == typeof(GeoPoint))
+                {
+                    GeoPoint sPoint = (GeoPoint)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsPointWithinBox(sPoint, selectingBox) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+                else if (_ShapeType == typeof(GeoPolyline))
+                {
+                    GeoPolyline sMultiPolyline = (GeoPolyline)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsMultiPolylinePartiallyWithinBox(sMultiPolyline, selectingBox) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+                else if (_ShapeType == typeof(GeoPolygon))
+                {
+                    GeoPolygon sMultiPolygon = (GeoPolygon)_Features.GetItem(i).Geometry;
+                    if (MapTool.IsMultiPolygonPartiallyWithinBox(sMultiPolygon, selectingBox) == true)
+                    {
+                        sSelectedFeatures.Add(_Features.GetItem(i));
+                    }
+                }
+            }
+            return sSelectedFeatures;
         }
 
         #endregion

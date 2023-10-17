@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MapObjects
 {
-    public abstract class Geometry
+    public abstract class Geometry:Shape
     {
         protected GeoParts _parts;
         protected double _MinX = double.MaxValue, _MaxX = double.MinValue;
