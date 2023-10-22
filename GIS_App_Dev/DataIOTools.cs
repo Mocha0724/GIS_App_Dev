@@ -11,6 +11,7 @@ namespace GIS_APP_DEV
 {
     public static class DataIOTools
     {
+        /*
         public static Layer ReadShp(string filepath)
         {
             OSGeo.GDAL.Gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8","YES");
@@ -23,6 +24,6 @@ namespace GIS_APP_DEV
             OSGeo.OGR.Layer pLayer = pDataSource.GetLayerByName(System.IO.Path.GetFileNameWithoutExtension(filepath));
             
         }
-
+        */
     }
 }

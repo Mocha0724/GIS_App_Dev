@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMapObjects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -209,17 +210,17 @@ namespace MapObjects
                 {
                     if (_Symbols[i].SymbolType == SymbolTypeConstant.SimpleMarkerSymbol)
                     {
-                        moSimpleMarkerSymbol sSymbol = (moSimpleMarkerSymbol)_Symbols[i];
+                        SimpleMarkerSymbol sSymbol = (SimpleMarkerSymbol)_Symbols[i];
                         sSymbol.Color = sColors[i];
                     }
                     else if (_Symbols[i].SymbolType == SymbolTypeConstant.SimpleLineSymbol)
                     {
-                        moSimpleLineSymbol sSymbol = (moSimpleLineSymbol)_Symbols[i];
+                        SimpleLineSymbol sSymbol = (SimpleLineSymbol)_Symbols[i];
                         sSymbol.Color = sColors[i];
                     }
                     else if (_Symbols[i].SymbolType == SymbolTypeConstant.SimpleFillSymbol)
                     {
-                        moSimpleFillSymbol sSymbol = (moSimpleFillSymbol)_Symbols[i];
+                        SimpleFillSymbol sSymbol = (SimpleFillSymbol)_Symbols[i];
                         sSymbol.Color = sColors[i];
                     }
                 }
@@ -257,12 +258,12 @@ namespace MapObjects
                 {
                     if (_Symbols[i].SymbolType == SymbolTypeConstant.SimpleMarkerSymbol)
                     {
-                        moSimpleMarkerSymbol sSymbol = (moSimpleMarkerSymbol)_Symbols[i];
+                        SimpleMarkerSymbol sSymbol = (SimpleMarkerSymbol)_Symbols[i];
                         sSymbol.Size = sSizes[i];
                     }
                     else if (_Symbols[i].SymbolType == SymbolTypeConstant.SimpleLineSymbol)
                     {
-                        moSimpleLineSymbol sSymbol = (moSimpleLineSymbol)_Symbols[i];
+                        SimpleLineSymbol sSymbol = (SimpleLineSymbol)_Symbols[i];
                         sSymbol.Size = sSizes[i];
                     }
                 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMapObjects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -36,11 +37,12 @@ namespace MapObjects
 
         #region 属性
 
-        public override Type SymbolType
+        
+        public override SymbolTypeConstant SymbolType
         {
             get
             {
-                return typeof(SimpleFillSymbol);
+                return 0;
             }
         }
 
