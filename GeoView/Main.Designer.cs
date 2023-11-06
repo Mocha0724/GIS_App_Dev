@@ -49,6 +49,10 @@
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.geoView帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于GeoViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.数据库ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.连接数据库ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.从数据库打开ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.保存至数据库ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsBar = new System.Windows.Forms.ToolStrip();
             this.btnOpenProject = new System.Windows.Forms.ToolStripButton();
             this.btnSaveProject = new System.Windows.Forms.ToolStripButton();
@@ -72,7 +76,6 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnIdentify = new System.Windows.Forms.ToolStripButton();
             this.layersTree = new System.Windows.Forms.TreeView();
-            this.moMap = new MyMapObjects.moMapControl();
             this.moMapRightMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.LayerRightMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.移除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,6 +90,7 @@
             this.MovePointBtn = new System.Windows.Forms.ToolStripButton();
             this.AddPointBtn = new System.Windows.Forms.ToolStripButton();
             this.DeletePointBtn = new System.Windows.Forms.ToolStripButton();
+            this.moMap = new MyMapObjects.moMapControl();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolsBar.SuspendLayout();
@@ -135,7 +139,8 @@
             this.文件ToolStripMenuItem,
             this.视图ToolStripMenuItem,
             this.选择ToolStripMenuItem,
-            this.帮助ToolStripMenuItem});
+            this.帮助ToolStripMenuItem,
+            this.数据库ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1034, 25);
@@ -156,28 +161,28 @@
             // 新建图层ToolStripMenuItem
             // 
             this.新建图层ToolStripMenuItem.Name = "新建图层ToolStripMenuItem";
-            this.新建图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.新建图层ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.新建图层ToolStripMenuItem.Text = "新建图层";
             this.新建图层ToolStripMenuItem.Click += new System.EventHandler(this.新建图层ToolStripMenuItem_Click);
             // 
             // 打开地图ToolStripMenuItem
             // 
             this.打开地图ToolStripMenuItem.Name = "打开地图ToolStripMenuItem";
-            this.打开地图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.打开地图ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.打开地图ToolStripMenuItem.Text = "打开";
             this.打开地图ToolStripMenuItem.Click += new System.EventHandler(this.打开地图ToolStripMenuItem_Click);
             // 
             // 另存为ToolStripMenuItem
             // 
             this.另存为ToolStripMenuItem.Name = "另存为ToolStripMenuItem";
-            this.另存为ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.另存为ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.另存为ToolStripMenuItem.Text = "另存为图片";
             this.另存为ToolStripMenuItem.Click += new System.EventHandler(this.另存为ToolStripMenuItem_Click);
             // 
             // 退出ToolStripMenuItem
             // 
             this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
-            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.退出ToolStripMenuItem.Text = "退出";
             this.退出ToolStripMenuItem.Click += new System.EventHandler(this.退出ToolStripMenuItem_Click);
             // 
@@ -257,6 +262,37 @@
             this.关于GeoViewToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.关于GeoViewToolStripMenuItem.Text = "关于Geo-GroupOne";
             this.关于GeoViewToolStripMenuItem.Click += new System.EventHandler(this.关于GeoViewToolStripMenuItem_Click);
+            // 
+            // 数据库ToolStripMenuItem
+            // 
+            this.数据库ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.连接数据库ToolStripMenuItem,
+            this.从数据库打开ToolStripMenuItem,
+            this.保存至数据库ToolStripMenuItem});
+            this.数据库ToolStripMenuItem.Name = "数据库ToolStripMenuItem";
+            this.数据库ToolStripMenuItem.Size = new System.Drawing.Size(56, 21);
+            this.数据库ToolStripMenuItem.Text = "数据库";
+            // 
+            // 连接数据库ToolStripMenuItem
+            // 
+            this.连接数据库ToolStripMenuItem.Name = "连接数据库ToolStripMenuItem";
+            this.连接数据库ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.连接数据库ToolStripMenuItem.Text = "连接数据库";
+            this.连接数据库ToolStripMenuItem.Click += new System.EventHandler(this.连接数据库ToolStripMenuItem_Click);
+            // 
+            // 从数据库打开ToolStripMenuItem
+            // 
+            this.从数据库打开ToolStripMenuItem.Name = "从数据库打开ToolStripMenuItem";
+            this.从数据库打开ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.从数据库打开ToolStripMenuItem.Text = "查询并展示图层";
+            this.从数据库打开ToolStripMenuItem.Click += new System.EventHandler(this.从数据库打开ToolStripMenuItem_Click);
+            // 
+            // 保存至数据库ToolStripMenuItem
+            // 
+            this.保存至数据库ToolStripMenuItem.Name = "保存至数据库ToolStripMenuItem";
+            this.保存至数据库ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.保存至数据库ToolStripMenuItem.Text = "修改操作";
+            this.保存至数据库ToolStripMenuItem.Click += new System.EventHandler(this.保存至数据库ToolStripMenuItem_Click);
             // 
             // toolsBar
             // 
@@ -493,28 +529,6 @@
             this.layersTree.DragEnter += new System.Windows.Forms.DragEventHandler(this.layersTree_DragEnter);
             this.layersTree.MouseDown += new System.Windows.Forms.MouseEventHandler(this.layersTree_MouseDown);
             // 
-            // moMap
-            // 
-            this.moMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.moMap.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.moMap.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.moMap.ContextMenuStrip = this.moMapRightMenu;
-            this.moMap.FlashColor = System.Drawing.Color.Green;
-            this.moMap.Location = new System.Drawing.Point(298, 56);
-            this.moMap.Name = "moMap";
-            this.moMap.SelectionColor = System.Drawing.Color.Cyan;
-            this.moMap.Size = new System.Drawing.Size(736, 587);
-            this.moMap.TabIndex = 0;
-            this.moMap.MapScaleChanged += new MyMapObjects.moMapControl.MapScaleChangedHandle(this.moMap_MapScaleChanged);
-            this.moMap.AfterTrackingLayerDraw += new MyMapObjects.moMapControl.AfterTrackingLayerDrawHandle(this.moMap_AfterTrackingLayerDraw);
-            this.moMap.MouseClick += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseClick);
-            this.moMap.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseDoubleClick);
-            this.moMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseDown);
-            this.moMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseMove);
-            this.moMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseUp);
-            // 
             // moMapRightMenu
             // 
             this.moMapRightMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
@@ -647,6 +661,28 @@
             this.DeletePointBtn.Visible = false;
             this.DeletePointBtn.Click += new System.EventHandler(this.DeletePointBtn_Click);
             // 
+            // moMap
+            // 
+            this.moMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.moMap.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.moMap.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.moMap.ContextMenuStrip = this.moMapRightMenu;
+            this.moMap.FlashColor = System.Drawing.Color.Green;
+            this.moMap.Location = new System.Drawing.Point(298, 56);
+            this.moMap.Name = "moMap";
+            this.moMap.SelectionColor = System.Drawing.Color.Cyan;
+            this.moMap.Size = new System.Drawing.Size(736, 587);
+            this.moMap.TabIndex = 0;
+            this.moMap.MapScaleChanged += new MyMapObjects.moMapControl.MapScaleChangedHandle(this.moMap_MapScaleChanged);
+            this.moMap.AfterTrackingLayerDraw += new MyMapObjects.moMapControl.AfterTrackingLayerDrawHandle(this.moMap_AfterTrackingLayerDraw);
+            this.moMap.MouseClick += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseClick);
+            this.moMap.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseDoubleClick);
+            this.moMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseDown);
+            this.moMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseMove);
+            this.moMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.moMap_MouseUp);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -736,5 +772,9 @@
         private System.Windows.Forms.ToolStripButton ClearSelectionBtn;
         private System.Windows.Forms.ToolStripMenuItem 视图ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 显示地理坐标ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 数据库ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 连接数据库ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 从数据库打开ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 保存至数据库ToolStripMenuItem;
     }
 }

@@ -33,6 +33,8 @@ namespace MyMapObjects
         private moSimpleMarkerSymbol mFlashPointSymbol;//闪烁点符号
         private moSimpleLineSymbol mFlashLineSymbol;//闪烁线符号
         private moSimpleFillSymbol mFlashFillSymbol;//闪烁面符号
+        //(4)数据库变量
+        public PostGISConnect mPostgisConnect;//创建数据库类
 
         #endregion
 

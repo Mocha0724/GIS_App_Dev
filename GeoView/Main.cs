@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using Npgsql;
+using GeoView.DataIOTools;
+using MyMapObjects;
 
 namespace GeoView
 {
@@ -53,7 +56,7 @@ namespace GeoView
         private bool mIsInEditPoint = false;    //编辑节点状态
         private bool mNeedToSave = false;   //是否需要保存数据
         private bool mPointEditNeedSave = false;//对节点的编辑是否被保存
-        private Int32 mLastOpLayerIndex = -1;   //最近一次操作的图层索引
+        public Int32 mLastOpLayerIndex = -1;   //最近一次操作的图层索引
         private Int32 mMouseOnPartIndex = -1;   //鼠标位于多边形部件的索引
         private Int32 mMouseOnPointIndex = -1;  //鼠标位于多边形部件顶点的索引
         private List<Int32> mLayerIndex = new List<Int32>();
@@ -62,6 +65,8 @@ namespace GeoView
         private List<MyMapObjects.moPoint> mEditPointRecord = new List<MyMapObjects.moPoint>();
         private List<Int32> mPastPartIndex = new List<Int32>();
         private List<Int32> mPastPointIndex = new List<Int32>();
+        private int index_dbf = 0;
+        private int index_gvshp = 0;
 
         private bool mIsInMovePoint
         {
@@ -1605,6 +1610,8 @@ namespace GeoView
                     sFeatures.Add(sFeature);
                 }
                 sMapLayer.Features = sFeatures;
+                index_dbf += 1;
+                index_gvshp += 1;
                 ThingsAfterNewLayer(sMapLayer, sGvShpFileManager, sDbfFileManager);
             }
             catch (Exception error)
@@ -1735,8 +1742,10 @@ namespace GeoView
             {
                 EndEditItem_Click(sender, e);
                 moMap.Layers.RemoveAt(mLastOpLayerIndex);
-                mGvShapeFiles.RemoveAt(mLastOpLayerIndex);
-                mDbfFiles.RemoveAt(mLastOpLayerIndex);
+                if (index_gvshp != 0)
+                    mGvShapeFiles.RemoveAt(index_gvshp);
+                if (index_dbf != 0)
+                    mDbfFiles.RemoveAt(index_dbf);
                 mLastOpLayerIndex = -1;
                 RefreshLayersTree();
                 RefreshSelectLayer();
@@ -1745,8 +1754,10 @@ namespace GeoView
             else
             {
                 moMap.Layers.RemoveAt(mLastOpLayerIndex);
-                mGvShapeFiles.RemoveAt(mLastOpLayerIndex);
-                mDbfFiles.RemoveAt(mLastOpLayerIndex);
+                if (index_gvshp != 0)
+                    mGvShapeFiles.RemoveAt(index_gvshp);
+                if (index_dbf != 0)
+                    mDbfFiles.RemoveAt(index_dbf);
                 mLastOpLayerIndex = -1;
                 RefreshLayersTree();
                 moMap.RedrawMap();
@@ -2301,7 +2312,7 @@ namespace GeoView
         }
 
         //寻找新打开图层的插入位置
-        private Int32 SearchInsertIndex(MyMapObjects.moGeometryTypeConstant shapeType)
+        public Int32 SearchInsertIndex(MyMapObjects.moGeometryTypeConstant shapeType)
         {
             Int32 index = 0;
             for (; index < moMap.Layers.Count; index++)
@@ -3390,9 +3401,6 @@ namespace GeoView
             path = mDbfFiles[index].DefaultPath;
             mDbfFiles[index].SaveToFile(path);
         }
-
-        #endregion
-
         private void 另存为ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             btnSaveProject_Click(sender, e);
@@ -3512,13 +3520,13 @@ namespace GeoView
             {
                 MyMapObjects.moMapLayer sLayer = moMap.Layers.GetItem(i);
                 sLayer.SelectedFeatures.Clear();
-            }        
+            }
             moMap.RedrawMap();
         }
 
         private void btnOpenProject_Click(object sender, EventArgs e)
         {
-            打开地图ToolStripMenuItem_Click(sender,e);
+            打开地图ToolStripMenuItem_Click(sender, e);
         }
 
         private void geoView帮助ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3529,6 +3537,54 @@ namespace GeoView
         private void 关于GeoViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Geo-GroupOne 由曹仁君，张哲玮，唐金潼，陈梦玺，徐嘉辰联合开发");
-        }   
+        }
+
+        #endregion
+
+        #region 数据库连接
+
+        private void 连接数据库ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            postsqlinfo infowindows= new postsqlinfo(this);//导入本窗口就可以了
+            infowindows.Owner = this;
+            infowindows.Show();//展示
+            //moMap.mPostgisConnect = new MyMapObjects.PostGISConnect();//实现这个类
+            //string order = "SELECT ST_AsText(geom) AS geom FROM public.province";
+            //DataTable dt=moMap.mPostgisConnect.Query(order);
+        }
+        private void 从数据库打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //点击这个之后，会弹出一个对话框，输入sql命令
+            Postsqlorder orderwindows = new Postsqlorder(this);//导入本窗口就可以了
+            orderwindows.Owner = this;
+            orderwindows.Show();//展示
+        }
+        public void Refresh_picture(MyMapObjects.moMapLayer sMapLayer)
+        {
+            Int32 index = SearchInsertIndex(sMapLayer.ShapeType);
+            mLastOpLayerIndex = index;
+            moMap.Layers.Insert(index, sMapLayer);
+            RefreshLayersTree();    //刷新图层列表
+            if (moMap.Layers.Count == 1)
+            {
+                moMap.FullExtent();
+            }
+            else
+            {
+                moMap.RedrawMap();
+            }
+        }
+        private void 保存至数据库ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Postgischangeorder orderwindows = new Postgischangeorder(this);//导入本窗口就可以了
+            orderwindows.Owner = this;
+            orderwindows.Show();//展示
+        }
+
+
+
+        #endregion
+
+
     }
 }

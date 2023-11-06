@@ -128,7 +128,7 @@ namespace MyMapObjects
         private void CalExtent()
         {
             double sMinX = double.MaxValue, sMaxX = double.MinValue;
-            double sMinY = double.MaxValue, sMaxY = double.MinValue;
+                                                                                                                                              double sMinY = double.MaxValue, sMaxY = double.MinValue;
             Int32 sPartCount = _Parts.Count;
             for (Int32 i = 0; i <= sPartCount - 1; i++)
             {
